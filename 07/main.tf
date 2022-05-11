@@ -131,23 +131,47 @@ resource "aws_route_table" "private_1" {
 }
 
 resource "aws_route" "private_0" {
-  route_table_id = aws_route_table.private_0.id
-  nat_gateway_id = aws_nat_gateway.nat_gateway_0.id
+  route_table_id         = aws_route_table.private_0.id
+  nat_gateway_id         = aws_nat_gateway.nat_gateway_0.id
   destination_cidr_block = "0.0.0.0/0"
 }
 
 resource "aws_route" "private_1" {
-  route_table_id = aws_route_table.private_1.id
-  nat_gateway_id = aws_nat_gateway.nat_gateway_1.id
+  route_table_id         = aws_route_table.private_1.id
+  nat_gateway_id         = aws_nat_gateway.nat_gateway_1.id
   destination_cidr_block = "0.0.0.0/0"
 }
 
 resource "aws_route_table_association" "private_0" {
-  subnet_id = aws_subnet.private_0.id
+  subnet_id      = aws_subnet.private_0.id
   route_table_id = aws_route_table.private_0.id
 }
 
 resource "aws_route_table_association" "private_1" {
-  subnet_id = aws_subnet.private_1.id
+  subnet_id      = aws_subnet.private_1.id
   route_table_id = aws_route_table.private_1.id
+}
+
+
+resource "aws_security_group" "example" {
+  name   = "example"
+  vpc_id = aws_vpc.example.id
+}
+
+resource "aws_security_group_rule" "ingress_example" {
+  type              = "ingress"
+  from_port         = "80"
+  to_port           = "80"
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.example.id
+}
+
+resource "aws_security_group_rule" "egress_example" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.example.id
 }
